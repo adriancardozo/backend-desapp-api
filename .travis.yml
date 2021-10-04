@@ -1,4 +1,4 @@
-language: kotlin
+language: java
 install: skip
 
 os: linux
