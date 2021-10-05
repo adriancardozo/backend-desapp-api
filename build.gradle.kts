@@ -40,6 +40,6 @@ tasks.withType<Test> {
 
 tasks.withType<Jar> {
 	manifest {
-		attributes["Main-Class"] = "ar.edu.unq.desapp.grupoL.backenddesappapi.main"
+		attributes["Main-Class"] = "ar.edu.unq.desapp.grupoL.backenddesappapi.BackenddesappapiApplication"
 	}
 }
