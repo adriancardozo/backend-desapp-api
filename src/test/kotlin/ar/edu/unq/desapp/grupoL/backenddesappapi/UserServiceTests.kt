@@ -13,7 +13,7 @@ class UserServiceTests {
     private lateinit var userService: UserService
 
     @Test
-    fun `When a user is saved, it can be recovered`() {
+    fun whenAUserIsSavedItCanBeRecovered() {
         val user = aUser()
         val idUserSaved = userService.save(user).id
         val recoveredUser = userService.findByID(idUserSaved)
