@@ -10,7 +10,7 @@ plugins {
 
 group = "ar.edu.unq.desapp.grupoL"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
 	mavenCentral()
@@ -30,16 +30,10 @@ dependencies {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
+		jvmTarget = "1.8"
 	}
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
-}
-
-tasks.withType<Jar> {
-	manifest {
-		attributes["Main-Class"] = "ar.edu.unq.desapp.grupoL.backenddesappapi.BackenddesappapiApplication"
-	}
 }
