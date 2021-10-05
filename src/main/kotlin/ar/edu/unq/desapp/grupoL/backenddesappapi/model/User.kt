@@ -6,4 +6,6 @@ data class User(var name : String,
                 var address : String,
                 var password : String,
                 var cvu : String,
-                var walletAddress : String )
+                var walletAddress : String,
+                var points: Int,
+                var numberOfOperations: Int)
