@@ -11,8 +11,8 @@ data class User(@Column(length = 30) var name : String,
                 @Column var password : String,
                 @Column(length = 22) var cvu : String,
                 @Column(length = 8) var walletAddress : String,
-                @Column var points: Int,
-                @Column var numberOfOperations: Int) {
+                @Column var points: Int = 0,
+                @Column var numberOfOperations: Int = 0) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0
