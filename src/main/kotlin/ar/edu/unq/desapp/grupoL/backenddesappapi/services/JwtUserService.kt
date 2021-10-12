@@ -16,6 +16,6 @@ class JwtUserService {
 
     fun createAuthenticationToken(user: User): String {
         val userDetails: UserDetails = userDetailsService.loadUserByUsername(user.email)
-        return jwtTokenUtil.generateToken(userDetails)
+        return "Bearer ${jwtTokenUtil.generateToken(userDetails)}"
     }
 }

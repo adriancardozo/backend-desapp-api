@@ -4,6 +4,7 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.core.ParameterizedTypeReference
@@ -17,14 +18,12 @@ import java.time.LocalDateTime
 
 @Service
 class CryptoCurrencyService {
-    val cryptoCurrenciesSearched: Set<String> = setOf(
-        "ALICEUSDT", "MATICUSDT", "AXSUSDT", "AAVEUSDT",
-        "ATOMUSDT", "NEOUSDT", "DOTUSDT", "ETHUSDT",
-        "CAKEUSDT", "BTCUSDT", "BNBUSDT", "ADAUSDT",
-        "TRXUSDT", "AUDIOUSDT"
-    )
-    private val cryptoCurrencyApiEndPoint = "https://api1.binance.com/api/v3/ticker/price"
-    private val dollarApiEndPoint = "https://api.estadisticasbcra.com/usd_of"
+    @Value("\${app.cryptos}")
+    private lateinit var cryptoCurrenciesSearched: List<String>
+    @Value("\${app.endpoint.crypto}")
+    private lateinit var cryptoCurrencyApiEndPoint: String
+    @Value("\${app.endpoint.dollar}")
+    private lateinit var dollarApiEndPoint: String
     @Autowired
     private lateinit var restTemplate: RestTemplate
 
