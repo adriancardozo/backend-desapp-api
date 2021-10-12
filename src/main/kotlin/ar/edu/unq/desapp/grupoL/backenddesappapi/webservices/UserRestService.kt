@@ -3,6 +3,8 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
+import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserAlreadyExistsException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -22,10 +24,16 @@ class UserRestService {
     @PostMapping("/api/user/register")
     @CrossOrigin
     fun register(@RequestBody user: User): ResponseEntity<*> {
-        val userSaved = userService.save(user)
-        val token = jwtUserService.createAuthenticationToken(userSaved)
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .header("Authorization", token)
-            .body(OkResponse())
+        return try {
+            val userSaved = userService.save(user)
+            val token = jwtUserService.createAuthenticationToken(userSaved)
+            ResponseEntity.status(HttpStatus.CREATED)
+                .header("Authorization", token)
+                .body(OkResponse())
+        } catch (e: UserAlreadyExistsException){
+            ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse("The user already exists"))
+        } catch (e: Throwable){
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
+        }
     }
 }

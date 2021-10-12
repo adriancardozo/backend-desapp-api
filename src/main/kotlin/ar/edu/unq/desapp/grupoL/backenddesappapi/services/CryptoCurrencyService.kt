@@ -3,16 +3,15 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.MissingExternalDependencyException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.MediaType
+import org.springframework.http.*
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDateTime
 
@@ -24,6 +23,8 @@ class CryptoCurrencyService {
     private lateinit var cryptoCurrencyApiEndPoint: String
     @Value("\${app.endpoint.dollar}")
     private lateinit var dollarApiEndPoint: String
+    @Value("\${app.token.bcra}")
+    private lateinit var dollarToken: String
     @Autowired
     private lateinit var restTemplate: RestTemplate
 
@@ -32,35 +33,42 @@ class CryptoCurrencyService {
     }
 
     fun allCryptoCurrencies(): List<CryptoCurrency> {
-        val response = restTemplate.exchange(
-            cryptoCurrencyApiEndPoint,
-            HttpMethod.GET,
-            null,
-            object : ParameterizedTypeReference<List<CryptoCurrencyDTO>>() {}
-        )
+        val response = getListRequest(cryptoCurrencyApiEndPoint, object : ParameterizedTypeReference<List<CryptoCurrencyDTO>>(){})
         val quotationHour: LocalDateTime = LocalDateTime.now()
         val dollarQuotation: Double = arsDollarQuotation()
         return (response.body ?: emptyList())
             .map { CryptoCurrency(it.symbol, it.price * dollarQuotation, quotationHour) }
     }
 
-    private fun arsDollarQuotation(): Double {
-        val headers = HttpHeaders()
-        headers.accept = listOf(MediaType.APPLICATION_JSON)
-        headers.contentType = MediaType.APPLICATION_JSON
-        headers.set("Authorization", "BEARER eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NjU0MzcxMjAsInR5cGUiOiJleHRlcm5hbCIsInVzZXIiOiJjYXJkb3pvYWRyaWFuOTk3QGdtYWlsLmNvbSJ9.eKm7XlvnqTNlx_0WNYPsENWSu1mDidgtCxtdpzEGdZlqarZdeRQauavp0QD_hTETgxcROUpljHgtmY2ZBMf2Ag")
-        val requestEntity = HttpEntity("parameters", headers)
-        val response = restTemplate.exchange(
-            dollarApiEndPoint,
-            HttpMethod.GET,
-            requestEntity,
-            object : ParameterizedTypeReference<List<DollarDTO>>() {}
-        )
-        return response.body?.last()?.v!!
-    }
-
     @Bean
     fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
         return builder.build()
+    }
+
+    private fun arsDollarQuotation(): Double {
+        val response = getListRequest(dollarApiEndPoint, object : ParameterizedTypeReference<List<DollarDTO>>(){}, requestEntityDollarQuotation())
+        return response.body?.last()?.v ?: throw MissingExternalDependencyException()
+    }
+
+    private fun requestEntityDollarQuotation(): HttpEntity<String> {
+        val headers = HttpHeaders()
+        headers.accept = listOf(MediaType.APPLICATION_JSON)
+        headers.contentType = MediaType.APPLICATION_JSON
+        headers.set("Authorization", dollarToken)
+        return HttpEntity("parameters", headers)
+    }
+
+    private fun<T> getListRequest(endPoint: String, parameterizedTypeReference: ParameterizedTypeReference<T>, requestEntity: HttpEntity<String>? = null): ResponseEntity<T> {
+        try {
+            return restTemplate.exchange(
+                endPoint,
+                HttpMethod.GET,
+                requestEntity,
+                parameterizedTypeReference
+            )
+        }
+        catch (e: RestClientException){
+            throw MissingExternalDependencyException()
+        }
     }
 }

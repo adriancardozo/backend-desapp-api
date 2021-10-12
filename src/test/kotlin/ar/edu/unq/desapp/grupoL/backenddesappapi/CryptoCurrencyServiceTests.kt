@@ -13,6 +13,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
@@ -27,6 +28,8 @@ class CryptoCurrencyServiceTests {
     @Autowired
     @InjectMocks
     private lateinit var cryptoCurrencyService: CryptoCurrencyService
+    @Value("\${app.cryptos}")
+    private lateinit var cryptoCurrencyNamesSearched: List<String>
 
     @BeforeEach
     fun beforeTest(){
@@ -67,15 +70,6 @@ class CryptoCurrencyServiceTests {
     }
 
     private fun cryptoCurrencyDTOSSearched(): List<CryptoCurrencyDTO> {
-        return cryptoCurrencyNamesSearched().map { CryptoCurrencyDTO(it, 200.0) }
-    }
-
-    private fun cryptoCurrencyNamesSearched(): Set<String> {
-        return setOf(
-            "ALICEUSDT", "MATICUSDT", "AXSUSDT", "AAVEUSDT",
-            "ATOMUSDT", "NEOUSDT", "DOTUSDT", "ETHUSDT",
-            "CAKEUSDT", "BTCUSDT", "BNBUSDT", "ADAUSDT",
-            "TRXUSDT", "AUDIOUSDT"
-        )
+        return cryptoCurrencyNamesSearched.map { CryptoCurrencyDTO(it, 200.0) }
     }
 }
