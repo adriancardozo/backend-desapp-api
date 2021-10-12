@@ -19,4 +19,8 @@ class UserService {
     fun findByID(id: Int): User {
         return repository.findById(id).get()
     }
+
+    fun findByEmail(email: String): User {
+        return repository.findByEmail(email)
+    }
 }
