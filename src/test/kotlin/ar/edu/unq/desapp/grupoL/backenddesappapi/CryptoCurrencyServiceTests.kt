@@ -4,9 +4,11 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.CryptoCurrencyService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.MissingExternalDependencyException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 
 
@@ -31,23 +34,51 @@ class CryptoCurrencyServiceTests {
     @Value("\${app.cryptos}")
     private lateinit var cryptoCurrencyNamesSearched: List<String>
 
-    @BeforeEach
-    fun beforeTest(){
-        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
-            .thenReturn(aResponseEntity(someCryptoCurrencyDTOs()), aResponseEntity(someDollarDTOs()))
-    }
-
     @Test
     fun allCryptoCurrenciesRequestAreDelegatedToExternalWebService() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenReturn(aResponseEntity(someCryptoCurrencyDTOs()), aResponseEntity(someDollarDTOs()))
         val cryptoCurrenciesResult = cryptoCurrencyService.allCryptoCurrencies()
         assertEquals(someCryptoCurrencyDTOs(), toCryptoCurrencyDTOs(cryptoCurrenciesResult))
     }
 
     @Test
     fun cryptoCurrenciesRequestAreDelegatedToExternalWebService() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenReturn(aResponseEntity(someCryptoCurrencyDTOs()), aResponseEntity(someDollarDTOs()))
         val cryptoCurrenciesResult = cryptoCurrencyService.cryptoCurrencies()
         assertEquals(cryptoCurrencyDTOSSearched(), toCryptoCurrencyDTOs(cryptoCurrenciesResult))
     }
+
+    @Test
+    fun ifCannotGetCryptoCurrenciesQuotationGetAllCryptoCurrenciesFail() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenThrow(RestClientException::class.java).thenReturn(aResponseEntity(someDollarDTOs()))
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.allCryptoCurrencies() }
+    }
+
+
+    @Test
+    fun ifCannotGetCryptoCurrenciesQuotationGetCryptoCurrenciesFail() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenThrow(RestClientException::class.java).thenReturn(aResponseEntity(someDollarDTOs()))
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.cryptoCurrencies() }
+    }
+
+    @Test
+    fun ifCannotGetDollarQuotationGetAllCryptoCurrenciesFail() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenReturn(aResponseEntity(cryptoCurrencyDTOSSearched())).thenThrow(RestClientException::class.java)
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.allCryptoCurrencies() }
+    }
+
+    @Test
+    fun ifCannotGetDollarQuotationGetCryptoCurrenciesFail() {
+        `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
+            .thenReturn(aResponseEntity(cryptoCurrencyDTOSSearched())).thenThrow(RestClientException::class.java)
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.cryptoCurrencies() }
+    }
+
 
     private fun <T> aResponseEntity(body: T): ResponseEntity<T> {
         return ResponseEntity(body, HttpStatus.OK)
