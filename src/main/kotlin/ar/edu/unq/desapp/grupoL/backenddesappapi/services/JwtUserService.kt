@@ -1,7 +1,7 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.jwtconfig.JwtTokenUtil
+import ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig.JwtTokenUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service

@@ -4,6 +4,7 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.CryptoCurrencyService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarQuotationDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.MissingExternalDependencyException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -89,7 +90,7 @@ class CryptoCurrencyServiceTests {
     }
 
     private fun dollarQuotation(): Double {
-        return someDollarDTOs().last().v
+        return someDollarDTOs().first { it.casa.nombre == "Dolar Oficial" }.casa.compra?.replace(",", ".")?.toDouble()!!
     }
 
     private fun someCryptoCurrencyDTOs(): List<CryptoCurrencyDTO> {
@@ -97,7 +98,7 @@ class CryptoCurrencyServiceTests {
     }
 
     private fun someDollarDTOs(): List<DollarDTO> {
-        return listOf(DollarDTO("",100.0))
+        return listOf(DollarDTO(DollarQuotationDTO("100,0", "100,0", "Dolar Oficial")))
     }
 
     private fun cryptoCurrencyDTOSSearched(): List<CryptoCurrencyDTO> {

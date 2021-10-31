@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +50,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity.csrf().disable()
             .cors().configurationSource(corsConfigurationSource())
-            .and().authorizeRequests().antMatchers("/api/user/register/", "/api/user/register").permitAll()
+            .and().authorizeRequests().antMatchers("/api/user/register/", "/api/user/register", "/swagger-ui.html", "/v2/api-docs/**", "/**/swagger-resources/**", "/webjars/springfox-swagger-ui/**").permitAll()
             .and().authorizeRequests().anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
             .and().sessionManagement()

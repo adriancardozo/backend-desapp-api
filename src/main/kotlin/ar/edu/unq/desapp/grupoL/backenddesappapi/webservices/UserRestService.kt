@@ -6,6 +6,7 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
+import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @EnableAutoConfiguration
+@Api(value = "user", description = "Rest API for user operations", tags = ["User API"])
 class UserRestService {
     @Autowired
     private lateinit var userService: UserService

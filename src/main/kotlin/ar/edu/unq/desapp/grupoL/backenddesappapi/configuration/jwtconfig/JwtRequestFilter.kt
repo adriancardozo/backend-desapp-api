@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserDetailsService
 import io.jsonwebtoken.ExpiredJwtException

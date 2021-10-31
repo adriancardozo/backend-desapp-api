@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
 
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
