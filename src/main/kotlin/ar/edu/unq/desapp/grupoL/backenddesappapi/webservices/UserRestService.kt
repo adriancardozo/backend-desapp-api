@@ -43,6 +43,7 @@ class UserRestService {
     }
 
     @PostMapping("/api/user/login")
+    @CrossOrigin
     fun login(@RequestBody loginUser: LoginUserDTO): ResponseEntity<*>? {
         return try {
             val token = userService.login(loginUser)
@@ -57,6 +58,7 @@ class UserRestService {
     }
 
     @GetMapping("/api/users/")
+    @CrossOrigin
     fun allUsers(): ResponseEntity<*> {
         return try {
             ResponseEntity.ok().body<List<SimpleUserDTO>>(userService.allUsers())
@@ -66,6 +68,7 @@ class UserRestService {
     }
 
     @GetMapping("/api/user/")
+    @CrossOrigin
     fun user(@RequestHeader("authorization") token: String): ResponseEntity<*> {
         return try {
             ResponseEntity.ok().body<UserDTO>(userService.user(token))

@@ -61,7 +61,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:3000")
+        configuration.allowedOrigins = listOf("http://localhost:3000", "https://localhost:3000", "https://frontend-desapp-grupol.herokuapp.com/", "https://frontend-desapp-grupol.herokuapp.com")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "OPTIONS")
         configuration.allowCredentials = true
         configuration.addAllowedHeader("*")
