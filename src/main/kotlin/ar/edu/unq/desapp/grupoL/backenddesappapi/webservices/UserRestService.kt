@@ -1,6 +1,7 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.LoginUserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.UserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
@@ -58,7 +59,7 @@ class UserRestService {
     @GetMapping("/api/users/")
     fun allUsers(): ResponseEntity<*> {
         return try {
-            ResponseEntity.ok().body<List<UserDTO>>(userService.allUsers())
+            ResponseEntity.ok().body<List<SimpleUserDTO>>(userService.allUsers())
         } catch (e: Throwable) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
         }
