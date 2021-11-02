@@ -16,6 +16,6 @@ class SpringCryptoCurrencyService: CryptoCurrencyService() {
         return cacheManager.getCache("quotations")?.get("quotationList")?.get() as List<QuotationDTO>
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 600000)
     fun storeQuotations() = cacheManager.getCache("quotations")?.put("quotationList", quotations())
 }
