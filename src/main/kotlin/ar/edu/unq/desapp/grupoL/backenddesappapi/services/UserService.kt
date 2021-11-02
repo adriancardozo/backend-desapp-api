@@ -1,6 +1,7 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.LoginUserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.UserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.UserRepository
@@ -37,7 +38,9 @@ class UserService {
         return toUserDTO(findByEmail(jwtUserService.userEmail(token)))
     }
 
-    fun allUsers(): List<UserDTO> = repository.findAll().map { toUserDTO(it) }
+    fun allUsers(): List<SimpleUserDTO> = repository.findAll().map {
+        SimpleUserDTO(it.name, it.lastname, it.numberOfOperations, it.reputation())
+    }
 
     private fun toUserDTO(user: User): UserDTO {
         return UserDTO(

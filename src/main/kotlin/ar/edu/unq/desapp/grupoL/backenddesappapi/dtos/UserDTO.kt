@@ -8,4 +8,4 @@ data class UserDTO(val name : String,
                    val walletAddress : String,
                    val points: Int,
                    val numberOfOperations: Int,
-                   val reputation: Float)
+                   val reputation: Float?)
