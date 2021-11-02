@@ -3,7 +3,7 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserAlreadyExistsException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
 import io.swagger.annotations.Api
@@ -32,9 +32,9 @@ class UserRestService {
             ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authorization", token)
                 .body(OkResponse())
-        } catch (e: UserAlreadyExistsException){
+        } catch (e: UserAlreadyExistsException) {
             ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse("The user already exists"))
-        } catch (e: Throwable){
+        } catch (e: Throwable) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
         }
     }

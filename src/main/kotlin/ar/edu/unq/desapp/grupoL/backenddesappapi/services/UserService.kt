@@ -2,8 +2,8 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.UserRepository
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserAlreadyExistsException
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserNotFoundException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service

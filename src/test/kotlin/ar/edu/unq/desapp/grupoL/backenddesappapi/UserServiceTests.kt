@@ -2,8 +2,8 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserAlreadyExistsException
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.UserNotFoundException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

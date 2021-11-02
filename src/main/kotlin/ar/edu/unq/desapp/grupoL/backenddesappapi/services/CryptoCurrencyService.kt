@@ -1,19 +1,25 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.MissingExternalDependencyException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.CryptoCurrencyRepository
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CryptoCurrencyDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.DollarDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.QuotationDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.MissingExternalDependencyException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 @Service
 class CryptoCurrencyService {
@@ -23,40 +29,48 @@ class CryptoCurrencyService {
     private lateinit var cryptoCurrencyApiEndPoint: String
     @Value("\${app.endpoint.dollar}")
     private lateinit var dollarApiEndPoint: String
-    //@Value("\${app.token.bcra}")
-    //private lateinit var dollarToken: String
     @Autowired
     private lateinit var restTemplate: RestTemplate
+    @Autowired
+    private lateinit var cryptoCurrencyRepository: CryptoCurrencyRepository
 
-    fun cryptoCurrencies() : List<CryptoCurrency> {
-        return allCryptoCurrencies().filter { cryptoCurrenciesSearched.contains(it.name) }
+    @Transactional
+    fun storedQuotations(): List<QuotationDTO> {
+        if(cryptoCurrencyRepository.isEmpty()) storeQuotations()
+        return toQuotationDTOs(cryptoCurrencyRepository.findAll())
     }
 
-    fun allCryptoCurrencies(): List<CryptoCurrency> {
-        val response = getListRequest(cryptoCurrencyApiEndPoint, object : ParameterizedTypeReference<List<CryptoCurrencyDTO>>(){})
-        val quotationHour: LocalDateTime = LocalDateTime.now()
-        val dollarQuotation: Double = arsDollarQuotation()
-        return (response.body ?: emptyList())
-            .map { CryptoCurrency(it.symbol, it.price * dollarQuotation, quotationHour) }
-    }
+    fun quotations(): List<QuotationDTO> = toQuotationDTOs(cryptoCurrencies())
 
     @Bean
-    fun restTemplate(builder: RestTemplateBuilder): RestTemplate {
-        return builder.build()
+    fun restTemplate(builder: RestTemplateBuilder): RestTemplate = builder.build()
+
+    private fun toQuotationDTOs(cryptoCurrencies: List<CryptoCurrency>): List<QuotationDTO> {
+        return cryptoCurrencies.map {
+            QuotationDTO(
+                it.name,
+                it.arPrice,
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(it.quotationHour), ZoneId.systemDefault())
+            )
+        }
+    }
+
+    private fun cryptoCurrencies(): List<CryptoCurrency> = allCryptoCurrencies().filter { cryptoCurrenciesSearched.contains(it.name) }
+
+    private fun allCryptoCurrencies(): List<CryptoCurrency> {
+        val response = getListRequest(cryptoCurrencyApiEndPoint, object : ParameterizedTypeReference<List<CryptoCurrencyDTO>>(){})
+        val quotationHour: Long = System.currentTimeMillis()
+        val dollarQuotation: Double = arsDollarQuotation()
+        return (response.body ?: emptyList()).map { CryptoCurrency(it.symbol, it.price * dollarQuotation, quotationHour) }
     }
 
     private fun arsDollarQuotation(): Double {
-        val response = getListRequest(dollarApiEndPoint, object : ParameterizedTypeReference<List<DollarDTO>>(){})//, requestEntityDollarQuotation())
+        val response = getListRequest(dollarApiEndPoint, object : ParameterizedTypeReference<List<DollarDTO>>(){})
         return response.body?.first { it.casa.nombre == "Dolar Oficial" }?.casa?.compra?.replace(",", ".")?.toDouble() ?: throw MissingExternalDependencyException()
     }
 
-   /* private fun requestEntityDollarQuotation(): HttpEntity<String> {
-        val headers = HttpHeaders()
-        headers.accept = listOf(MediaType.APPLICATION_JSON)
-        headers.contentType = MediaType.APPLICATION_JSON
-        headers.set("Authorization", dollarToken)
-        return HttpEntity("parameters", headers)
-    }*/
+    @Scheduled(fixedRate = 600000)
+    protected fun storeQuotations() = cryptoCurrencyRepository.saveAll(cryptoCurrencies())
 
     private fun<T> getListRequest(endPoint: String, parameterizedTypeReference: ParameterizedTypeReference<T>, requestEntity: HttpEntity<String>? = null): ResponseEntity<T> {
         try {

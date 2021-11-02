@@ -1,3 +1,0 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos
-
-data class DollarDTO(val casa: DollarQuotationDTO)

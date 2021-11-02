@@ -1,13 +1,14 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi
 
-import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.CryptoCurrencyService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.CryptoCurrencyDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.dtos.DollarQuotationDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.exceptions.MissingExternalDependencyException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CryptoCurrencyDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.DollarDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.DollarQuotationDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.QuotationDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.MissingExternalDependencyException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
+import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.CryptoCurrencyRepository
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
@@ -18,17 +19,22 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.*
+import org.springframework.test.context.TestPropertySource
 import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 
 
 @SpringBootTest
 @ExtendWith(MockitoExtension::class)
+//@TestPropertySource(properties = ["app.scheduling.enable=false"])
 class CryptoCurrencyServiceTests {
-    @Mock
+    @MockBean
     private lateinit var restTemplate: RestTemplate
+    @MockBean
+    private lateinit var cryptoCurrencyRepository: CryptoCurrencyRepository
     @Autowired
     @InjectMocks
     private lateinit var cryptoCurrencyService: CryptoCurrencyService
@@ -36,57 +42,72 @@ class CryptoCurrencyServiceTests {
     private lateinit var cryptoCurrencyNamesSearched: List<String>
 
     @Test
-    fun allCryptoCurrenciesRequestAreDelegatedToExternalWebService() {
+    fun quotationsRequestsAreDelegatedToExternalWebService() {
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
             .thenReturn(aResponseEntity(someCryptoCurrencyDTOs()), aResponseEntity(someDollarDTOs()))
-        val cryptoCurrenciesResult = cryptoCurrencyService.allCryptoCurrencies()
-        assertEquals(someCryptoCurrencyDTOs(), toCryptoCurrencyDTOs(cryptoCurrenciesResult))
+        val quotations = cryptoCurrencyService.quotations()
+        assertEquals(cryptoCurrencyDTOSSearched(), toCryptoCurrencyDTOs(quotations))
     }
 
     @Test
-    fun cryptoCurrenciesRequestAreDelegatedToExternalWebService() {
+    fun storeQuotationsRequestAreDelegatedToRepository() {
+        `when`(cryptoCurrencyRepository.findAll()).thenReturn(toCryptoCurrencies(cryptoCurrencyDTOSSearched()))
+        `when`(cryptoCurrencyRepository.isEmpty()).thenReturn(false)
+        val storedQuotationsResult = cryptoCurrencyService.storedQuotations()
+        assertEquals(cryptoCurrencyDTOSSearched(), toCryptoCurrencyDTOs(storedQuotationsResult))
+    }
+
+    @Test
+    fun ifQuotationsNotStoredStoreQuotationsRequestsAreDelegatedToExternalWebService() {
+        `when`(cryptoCurrencyRepository.findAll()).thenReturn(toCryptoCurrencies(cryptoCurrencyDTOSSearched()))
+        `when`(cryptoCurrencyRepository.isEmpty()).thenReturn(true)
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
-            .thenReturn(aResponseEntity(someCryptoCurrencyDTOs()), aResponseEntity(someDollarDTOs()))
-        val cryptoCurrenciesResult = cryptoCurrencyService.cryptoCurrencies()
-        assertEquals(cryptoCurrencyDTOSSearched(), toCryptoCurrencyDTOs(cryptoCurrenciesResult))
+            .thenReturn(aResponseEntity(cryptoCurrencyDTOSSearched()), aResponseEntity(someDollarDTOs()))
+        val storedQuotationsResult = cryptoCurrencyService.storedQuotations()
+        assertEquals(cryptoCurrencyDTOSSearched(), toCryptoCurrencyDTOs(storedQuotationsResult))
     }
 
     @Test
-    fun ifCannotGetCryptoCurrenciesQuotationGetAllCryptoCurrenciesFail() {
+    fun ifCannotGetCryptoCurrenciesQuotationGetQuotationsFail() {
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
             .thenThrow(RestClientException::class.java).thenReturn(aResponseEntity(someDollarDTOs()))
-        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.allCryptoCurrencies() }
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.quotations() }
     }
 
 
     @Test
-    fun ifCannotGetCryptoCurrenciesQuotationGetCryptoCurrenciesFail() {
+    fun ifCannotGetCryptoCurrenciesQuotationGetStoredQuotationsFail() {
+        `when`(cryptoCurrencyRepository.isEmpty()).thenReturn(true)
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
             .thenThrow(RestClientException::class.java).thenReturn(aResponseEntity(someDollarDTOs()))
-        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.cryptoCurrencies() }
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.storedQuotations() }
     }
 
     @Test
-    fun ifCannotGetDollarQuotationGetAllCryptoCurrenciesFail() {
+    fun ifCannotGetDollarQuotationGetQuotationsFail() {
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
             .thenReturn(aResponseEntity(cryptoCurrencyDTOSSearched())).thenThrow(RestClientException::class.java)
-        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.allCryptoCurrencies() }
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.quotations() }
     }
 
     @Test
-    fun ifCannotGetDollarQuotationGetCryptoCurrenciesFail() {
+    fun ifCannotGetDollarQuotationGetStoredQuotationsFail() {
+        `when`(cryptoCurrencyRepository.isEmpty()).thenReturn(true)
         `when`(restTemplate.exchange(anyString(), any(), any(), any(ParameterizedTypeReference::class.java)))
             .thenReturn(aResponseEntity(cryptoCurrencyDTOSSearched())).thenThrow(RestClientException::class.java)
-        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.cryptoCurrencies() }
+        assertThrows<MissingExternalDependencyException> { cryptoCurrencyService.storedQuotations() }
     }
-
 
     private fun <T> aResponseEntity(body: T): ResponseEntity<T> {
         return ResponseEntity(body, HttpStatus.OK)
     }
 
-    private fun toCryptoCurrencyDTOs(cryptoCurrencies: List<CryptoCurrency>): List<CryptoCurrencyDTO> {
-        return cryptoCurrencies.map { CryptoCurrencyDTO(it.name, it.arPrice / dollarQuotation()) }
+    private fun toCryptoCurrencyDTOs(quotations: List<QuotationDTO>): List<CryptoCurrencyDTO> {
+        return quotations.map { CryptoCurrencyDTO(it.name, it.arPrice / dollarQuotation()) }
+    }
+
+    private fun toCryptoCurrencies(cryptoCurrencyDTOs: List<CryptoCurrencyDTO>): List<CryptoCurrency> {
+        return cryptoCurrencyDTOs.map { CryptoCurrency(it.symbol, it.price * dollarQuotation(), 0)  }
     }
 
     private fun dollarQuotation(): Double {
