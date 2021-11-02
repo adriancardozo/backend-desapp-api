@@ -50,7 +50,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(httpSecurity: HttpSecurity) {
         httpSecurity.csrf().disable()
             .cors().configurationSource(corsConfigurationSource())
-            .and().authorizeRequests().antMatchers("/api/user/register/", "/api/user/register", "/swagger-ui.html", "/v2/api-docs/**", "/**/swagger-resources/**", "/webjars/springfox-swagger-ui/**").permitAll()
+            .and().authorizeRequests().antMatchers("/api/user/register/", "/api/user/register", "/api/user/login/", "/api/user/login", "/swagger-ui.html", "/v2/api-docs/**", "/**/swagger-resources/**", "/webjars/springfox-swagger-ui/**").permitAll()
             .and().authorizeRequests().anyRequest().authenticated()
             .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
             .and().sessionManagement()

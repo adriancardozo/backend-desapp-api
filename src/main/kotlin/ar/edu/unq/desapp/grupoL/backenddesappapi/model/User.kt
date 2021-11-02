@@ -16,4 +16,6 @@ data class User(@Column(length = 30) var name : String,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0
+
+    fun reputation(): Float = points / (if(numberOfOperations != 0) numberOfOperations else 1).toFloat()
 }
