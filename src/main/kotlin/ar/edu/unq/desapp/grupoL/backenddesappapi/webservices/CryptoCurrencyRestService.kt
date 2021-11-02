@@ -1,12 +1,12 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.QuotationDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.CryptoCurrencyService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.MissingExternalDependencyException
+import ar.edu.unq.desapp.grupoL.backenddesappapi.services.SpringCryptoCurrencyService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 @Api(value = "crypto-currency", description = "Rest API for cryptocurrency operations", tags = ["Cryptocurrency API"])
 class CryptoCurrencyRestService {
     @Autowired
-    private lateinit var cryptoCurrencyService: CryptoCurrencyService
+    private lateinit var cryptoCurrencyService: SpringCryptoCurrencyService
 
     @GetMapping("/api/crypto/quotation")
     //@ApiResponses(value = [ApiResponse(code = 200, message = "ok", response = [CryptoCurrency]::class)])
