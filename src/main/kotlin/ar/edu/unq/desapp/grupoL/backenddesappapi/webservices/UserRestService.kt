@@ -1,8 +1,10 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.LoginUserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.RegisterUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.UserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.InvalidDataException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
@@ -29,12 +31,14 @@ class UserRestService {
 
     @PostMapping("/api/user/register")
     @CrossOrigin
-    fun register(@RequestBody user: User): ResponseEntity<*> {
+    fun register(@RequestBody user: RegisterUserDTO): ResponseEntity<*> {
         return try {
             val token = userService.register(user)
             ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authorization", token)
                 .body(OkResponse())
+        } catch (e: InvalidDataException) {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Invalid data"))
         } catch (e: UserAlreadyExistsException) {
             ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse("The user already exists"))
         } catch (e: Throwable) {

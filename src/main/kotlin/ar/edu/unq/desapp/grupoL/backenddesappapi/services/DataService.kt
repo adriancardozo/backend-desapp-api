@@ -22,8 +22,8 @@ class DataService {
 
     @PostConstruct
     fun initialize() {
-        userRepository.save(User("A", "B", "ab@gmail.com", "ab", "ab", "1111111111111111111111", "11111111", 20, 2))
-        userRepository.save(User("A", "C", "ac@gmail.com", "ac", "ac", "1111111111111111111111", "11111111", 40, 2))
+        userRepository.save(User("Adrián", "Cardozo", "ab@gmail.com", "ababababab", "Adca111*", "1111111111111111111111", "11111111", 20, 2))
+        userRepository.save(User("Roberto", "Perez", "rp@gmail.com", "rprprprprp", "Rope111*", "2222222222222222222222", "22222222", 40, 2))
         activityRepository.save(Activity(LocalDateTime.now(),
             cryptoCurrencyRepository.save(CryptoCurrency("BTCUSDT", 3000.0, System.currentTimeMillis())),
             userRepository.findByEmail("ab@gmail.com"),

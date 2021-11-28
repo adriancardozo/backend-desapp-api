@@ -19,6 +19,6 @@ class ActivityService {
                 it.amount,
                 it.cryptoCurrency.arPrice,
                 it.amount * it.cryptoCurrency.arPrice,
-                SimpleUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation())) }
+                SimpleUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation(), it.user.email)) }
     }
 }
