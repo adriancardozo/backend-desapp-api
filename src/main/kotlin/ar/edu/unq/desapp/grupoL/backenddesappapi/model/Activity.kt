@@ -6,7 +6,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "activities")
 data class Activity(@Column var hour: LocalDateTime,
-                    @OneToOne var cryptoCurrency: CryptoCurrency,
+                    @OneToOne var quotation: Quotation,
                     @ManyToOne var user: User,
                     @Column var amount: Double,
                     @Column var type: ActivityType) {

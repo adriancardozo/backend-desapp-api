@@ -1,18 +1,17 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityCryptoCurrencyDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityQuotationDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CreateActivityDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Activity
-import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
+import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Quotation
 import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.ActivityRepository
-import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.CryptoCurrencyRepository
+import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.QuotationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 @Service
 class ActivityService {
@@ -23,7 +22,7 @@ class ActivityService {
     @Autowired
     lateinit var jwtUserService: JwtUserService
     @Autowired
-    lateinit var cryptoCurrencyRepository: CryptoCurrencyRepository
+    lateinit var quotationRepository: QuotationRepository
 
     @Transactional
     fun createActivity(token: String, createActivity: CreateActivityDTO) {
@@ -31,8 +30,7 @@ class ActivityService {
         repository.save(
             Activity(
                 LocalDateTime.now(),
-                cryptoCurrencyRepository.save(CryptoCurrency(createActivity.cryptoName, createActivity.cryptoQuotation, createActivity.quotationHour.atZone(
-                    ZoneId.systemDefault()).toInstant().toEpochMilli())),
+                quotationRepository.save(Quotation(createActivity.cryptoName, createActivity.cryptoQuotation)),
                 user,
                 createActivity.amount,
                 createActivity.type
@@ -44,9 +42,9 @@ class ActivityService {
         return repository.findAll().map {
             ActivityDTO(
                 it.hour.toString(),
-                ActivityCryptoCurrencyDTO(it.cryptoCurrency.name, it.cryptoCurrency.arPrice),
+                ActivityQuotationDTO(it.quotation.name, it.quotation.arPrice),
                 it.amount,
-                it.amount * it.cryptoCurrency.arPrice,
+                it.amount * it.quotation.arPrice,
                 SimpleUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation(), it.user.email),
                 it.type
             ) }

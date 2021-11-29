@@ -5,6 +5,7 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.DollarDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.QuotationDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.MissingExternalDependencyException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
+import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Quotation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -41,20 +42,20 @@ abstract class CryptoCurrencyService {
     protected fun toQuotationDTOs(cryptoCurrencies: List<CryptoCurrency>): List<QuotationDTO> {
         return cryptoCurrencies.map {
             QuotationDTO(
-                it.name,
-                it.arPrice,
+                it.quotation.name,
+                it.quotation.arPrice,
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(it.quotationHour), ZoneId.systemDefault())
             )
         }
     }
 
-    protected fun cryptoCurrencies(): List<CryptoCurrency> = allCryptoCurrencies().filter { cryptoCurrenciesSearched.contains(it.name) }
+    protected fun cryptoCurrencies(): List<CryptoCurrency> = allCryptoCurrencies().filter { cryptoCurrenciesSearched.contains(it.quotation.name) }
 
     private fun allCryptoCurrencies(): List<CryptoCurrency> {
         val response = getListRequest(cryptoCurrencyApiEndPoint, object : ParameterizedTypeReference<List<CryptoCurrencyDTO>>(){})
         val quotationHour: Long = System.currentTimeMillis()
         val dollarQuotation: Double = arsDollarQuotation()
-        return (response.body ?: emptyList()).map { CryptoCurrency(it.symbol, it.price * dollarQuotation, quotationHour) }
+        return (response.body ?: emptyList()).map { CryptoCurrency(Quotation(it.symbol, it.price * dollarQuotation), quotationHour) }
     }
 
     private fun arsDollarQuotation(): Double {

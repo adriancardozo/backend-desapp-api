@@ -1,6 +1,6 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.dtos
 
-data class ActivityCryptoCurrencyDTO(
+data class ActivityQuotationDTO(
     val name: String,
     val quotation: Double
 )
