@@ -1,6 +1,7 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Activity
+import ar.edu.unq.desapp.grupoL.backenddesappapi.model.ActivityType
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.CryptoCurrency
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
 import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.ActivityRepository
@@ -27,18 +28,18 @@ class DataService {
         activityRepository.save(Activity(LocalDateTime.now(),
             cryptoCurrencyRepository.save(CryptoCurrency("BTCUSDT", 3000.0, System.currentTimeMillis())),
             userRepository.findByEmail("ab@gmail.com"),
-            20.0))
+            20.0, ActivityType.SALE))
         activityRepository.save(Activity(LocalDateTime.now(),
             cryptoCurrencyRepository.save(CryptoCurrency("ETHUSDT", 3200.0, System.currentTimeMillis())),
             userRepository.findByEmail("ab@gmail.com"),
-            30.0))
+            30.0, ActivityType.BUY))
         activityRepository.save(Activity(LocalDateTime.now(),
             cryptoCurrencyRepository.save(CryptoCurrency("BNBUSDT", 3400.0, System.currentTimeMillis())),
             userRepository.findByEmail("ab@gmail.com"),
-            40.0))
+            40.0, ActivityType.SALE))
         activityRepository.save(Activity(LocalDateTime.now(),
             cryptoCurrencyRepository.save(CryptoCurrency("NEOUSDT", 3500.0, System.currentTimeMillis())),
             userRepository.findByEmail("ab@gmail.com"),
-            50.0))
+            50.0, ActivityType.BUY))
     }
 }

@@ -1,9 +1,11 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.dtos
 
+import ar.edu.unq.desapp.grupoL.backenddesappapi.model.ActivityType
+
 data class ActivityDTO(val hour: String,
-                       val cryptoCurrencyName: String,
-                       val cryptoCurrencyAmount: Double,
-                       val cryptoCurrencyQuotation: Double,
-                       val arsOperationAmount: Double,
-                       val user: SimpleUserDTO
+                       val cryptocurrency: ActivityCryptoCurrencyDTO,
+                       val amount: Double,
+                       val amountARS: Double,
+                       val user: SimpleUserDTO,
+                       val type: ActivityType
                        )
