@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.jwt
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserDetailsService
 import io.jsonwebtoken.ExpiredJwtException
@@ -15,11 +15,11 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Component
-class JwtRequestFilter : OncePerRequestFilter() {
+class RequestFilterJwt : OncePerRequestFilter() {
     @Autowired
     private lateinit var jwtUserDetailsService: JwtUserDetailsService
     @Autowired
-    private lateinit var jwtTokenUtil: JwtTokenUtil
+    private lateinit var tokenUtilJwt: TokenUtilJwt
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         val requestTokenHeader = request.getHeader("Authorization")
@@ -28,7 +28,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7)
             try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken)
+                username = tokenUtilJwt.getUsernameFromToken(jwtToken)
             } catch (e: IllegalArgumentException) {
                 println("Unable to get JWT Token")
             } catch (e: ExpiredJwtException) {
@@ -39,7 +39,7 @@ class JwtRequestFilter : OncePerRequestFilter() {
         }
         if (username != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails: UserDetails = jwtUserDetailsService.loadUserByUsername(username)
-            if (jwtTokenUtil.validateToken(jwtToken!!, userDetails)) {
+            if (tokenUtilJwt.validateToken(jwtToken!!, userDetails)) {
                 val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.authorities
                 )

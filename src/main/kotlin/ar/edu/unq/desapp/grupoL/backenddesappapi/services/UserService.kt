@@ -72,7 +72,7 @@ class UserService {
     fun user(token: String): UserDTO = toUserDTO(findByEmail(jwtUserService.userEmail(token)))
 
     fun allUsers(): List<SimpleUserDTO> = repository.findAll().map {
-        SimpleUserDTO(it.name, it.lastname, it.numberOfOperations, it.reputation(), it.email)
+        SimpleUserDTO(it.name, it.lastname, it.numberOfOperations, it.reputation())
     }
 
     private fun toUserDTO(user: User): UserDTO {

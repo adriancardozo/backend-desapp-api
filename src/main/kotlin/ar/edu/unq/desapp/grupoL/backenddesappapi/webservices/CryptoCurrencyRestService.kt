@@ -3,10 +3,9 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.QuotationDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.MissingExternalDependencyException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.SpringCryptoCurrencyService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ErrorResponseDTO
 import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,9 +27,9 @@ class CryptoCurrencyRestService {
         return try {
             ResponseEntity.ok().body<List<QuotationDTO>>(cryptoCurrencyService.storedQuotations())
         } catch (e: MissingExternalDependencyException) {
-            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse("Service Unavailable"))
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponseDTO("Service Unavailable"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -40,9 +39,9 @@ class CryptoCurrencyRestService {
         return try {
             ResponseEntity.ok().body<List<QuotationDTO>>(cryptoCurrencyService.quotations())
         } catch (e: MissingExternalDependencyException) {
-            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponse("Service Unavailable"))
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(ErrorResponseDTO("Service Unavailable"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 

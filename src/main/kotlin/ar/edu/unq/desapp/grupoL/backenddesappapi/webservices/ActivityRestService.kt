@@ -2,16 +2,14 @@ package ar.edu.unq.desapp.grupoL.backenddesappapi.webservices
 
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CreateActivityDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.LoginUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.ActivityService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ErrorResponseDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.OkResponseDTO
 import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -27,7 +25,7 @@ class ActivityRestService {
         return try {
             ResponseEntity.ok().body<List<ActivityDTO>>(activityService.allActivities())
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -37,9 +35,9 @@ class ActivityRestService {
         return try {
             activityService.createActivity(token, createActivity)
             ResponseEntity.status(HttpStatus.CREATED)
-                .body(OkResponse())
+                .body(OkResponseDTO())
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 }

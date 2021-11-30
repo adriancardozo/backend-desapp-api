@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.jwt
 
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Component
-class JwtAuthenticationEntryPoint : AuthenticationEntryPoint, Serializable {
+class AuthenticationEntryPointJwt : AuthenticationEntryPoint, Serializable {
     override fun commence(
         request: HttpServletRequest?, response: HttpServletResponse,
         authException: AuthenticationException

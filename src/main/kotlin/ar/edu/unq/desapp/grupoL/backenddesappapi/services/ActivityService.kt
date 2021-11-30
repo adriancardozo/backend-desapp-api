@@ -1,9 +1,6 @@
 package ar.edu.unq.desapp.grupoL.backenddesappapi.services
 
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityQuotationDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CreateActivityDTO
-import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.*
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.ActivityNotFoundException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Activity
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Quotation
@@ -44,7 +41,7 @@ class ActivityService {
                 ActivityQuotationDTO(it.quotation.name, it.quotation.arPrice),
                 it.amount,
                 it.amount * it.quotation.arPrice,
-                SimpleUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation(), it.user.email),
+                ActivityUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation(), it.user.email),
                 it.type
             ) }
     }

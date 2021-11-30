@@ -1,5 +1,7 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration
 
+import ar.edu.unq.desapp.grupoL.backenddesappapi.jwt.AuthenticationEntryPointJwt
+import ar.edu.unq.desapp.grupoL.backenddesappapi.jwt.RequestFilterJwt
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -22,15 +24,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+class WebSecurityConfiguration : WebSecurityConfigurerAdapter() {
     @Autowired
-    private lateinit var jwtAuthenticationEntryPoint: JwtAuthenticationEntryPoint
+    private lateinit var authenticationEntryPointJwt: AuthenticationEntryPointJwt
 
     @Autowired
     private lateinit var jwtUserDetailsService: JwtUserDetailsService
 
     @Autowired
-    private lateinit var jwtRequestFilter: JwtRequestFilter
+    private lateinit var requestFilterJwt: RequestFilterJwt
 
     @Autowired
     fun configureGlobal(auth: AuthenticationManagerBuilder) {
@@ -52,10 +54,10 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
             .cors().configurationSource(corsConfigurationSource())
             .and().authorizeRequests().antMatchers("/api/user/register/", "/api/user/register", "/api/user/login/", "/api/user/login", "/swagger-ui.html", "/v2/api-docs/**", "/**/swagger-resources/**", "/webjars/springfox-swagger-ui/**").permitAll()
             .and().authorizeRequests().anyRequest().authenticated()
-            .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPointJwt)
             .and().sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .and().addFilterBefore(requestFilterJwt, UsernamePasswordAuthenticationFilter::class.java)
     }
 
     @Bean

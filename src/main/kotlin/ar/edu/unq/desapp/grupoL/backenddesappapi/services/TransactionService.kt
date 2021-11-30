@@ -121,7 +121,7 @@ class TransactionService {
         ActivityQuotationDTO(activity.quotation.name, activity.quotation.arPrice),
         activity.amount,
         activity.amount * activity.quotation.arPrice,
-        SimpleUserDTO(
+        ActivityUserDTO(
             activity.user.name,
             activity.user.lastname,
             activity.user.numberOfOperations,

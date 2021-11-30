@@ -8,8 +8,8 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.InvalidDataException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ErrorResponseDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.OkResponseDTO
 import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -32,13 +32,13 @@ class UserRestService {
             val token = userService.register(user)
             ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authorization", token)
-                .body(OkResponse())
+                .body(OkResponseDTO())
         } catch (e: InvalidDataException) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Invalid data"))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDTO("Invalid data"))
         } catch (e: UserAlreadyExistsException) {
-            ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse("The user already exists"))
+            ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponseDTO("The user already exists"))
         } catch (e: Throwable) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -49,11 +49,11 @@ class UserRestService {
             val token = userService.login(loginUser)
             ResponseEntity.status(HttpStatus.CREATED)
                 .header("Authorization", token)
-                .body(OkResponse())
+                .body(OkResponseDTO())
         } catch (e: UserNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The user not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The user not exists"))
         } catch (e: Throwable) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -63,7 +63,7 @@ class UserRestService {
         return try {
             ResponseEntity.ok().body<List<SimpleUserDTO>>(userService.allUsers())
         } catch (e: Throwable) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -73,7 +73,7 @@ class UserRestService {
         return try {
             ResponseEntity.ok().body<UserDTO>(userService.user(token))
         } catch (e: Throwable) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("Bad Request"))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponseDTO("Bad Request"))
         }
     }
 }

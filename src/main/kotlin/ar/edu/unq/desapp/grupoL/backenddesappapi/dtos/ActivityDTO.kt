@@ -7,6 +7,6 @@ data class ActivityDTO(val id: Int,
                        val cryptocurrency: ActivityQuotationDTO,
                        val amount: Double,
                        val amountARS: Double,
-                       val user: SimpleUserDTO,
+                       val user: ActivityUserDTO,
                        val type: ActivityType
                        )

@@ -1,4 +1,4 @@
-package ar.edu.unq.desapp.grupoL.backenddesappapi.configuration.jwtconfig
+package ar.edu.unq.desapp.grupoL.backenddesappapi.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
 
 
 @Component
-class JwtTokenUtil : Serializable {
+class TokenUtilJwt : Serializable {
     @Value("\${jwt.secret}")
     private val secret: String? = null
 

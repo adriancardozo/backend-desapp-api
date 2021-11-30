@@ -6,8 +6,8 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.ActivityNotFoundExce
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.InvalidOperationException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.TransactionNotFoundException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.TransactionService
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
-import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ErrorResponseDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.OkResponseDTO
 import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -30,11 +30,11 @@ class TransactionRestService {
             ResponseEntity.status(HttpStatus.CREATED)
                 .body(transaction)
         } catch (e: ActivityNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The activity not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The activity not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -44,9 +44,9 @@ class TransactionRestService {
         return try {
             ResponseEntity.ok().body<TransactionDTO>(transactionService.transaction(token, id))
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -56,7 +56,7 @@ class TransactionRestService {
         return try {
             ResponseEntity.ok().body<List<TransactionDTO>>(transactionService.userTransactions(token))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -65,13 +65,13 @@ class TransactionRestService {
     fun acceptTransaction(@RequestHeader("authorization") token: String, @PathVariable id: Long): ResponseEntity<*> {
         return try {
             transactionService.accept(token, id)
-            ResponseEntity.ok().body(OkResponse())
+            ResponseEntity.ok().body(OkResponseDTO())
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -80,13 +80,13 @@ class TransactionRestService {
     fun rejectTransaction(@RequestHeader("authorization") token: String, @PathVariable id: Long): ResponseEntity<*> {
         return try {
             transactionService.reject(token, id)
-            ResponseEntity.ok().body(OkResponse())
+            ResponseEntity.ok().body(OkResponseDTO())
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -95,13 +95,13 @@ class TransactionRestService {
     fun transfer(@RequestHeader("authorization") token: String, @PathVariable id: Long): ResponseEntity<*> {
         return try {
             transactionService.transfer(token, id)
-            ResponseEntity.ok().body(OkResponse())
+            ResponseEntity.ok().body(OkResponseDTO())
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -110,13 +110,13 @@ class TransactionRestService {
     fun commit(@RequestHeader("authorization") token: String, @PathVariable id: Long): ResponseEntity<*> {
         return try {
             transactionService.commit(token, id)
-            ResponseEntity.ok().body(OkResponse())
+            ResponseEntity.ok().body(OkResponseDTO())
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 
@@ -125,13 +125,13 @@ class TransactionRestService {
     fun cancel(@RequestHeader("authorization") token: String, @PathVariable id: Long): ResponseEntity<*> {
         return try {
             transactionService.cancel(token, id)
-            ResponseEntity.ok().body(OkResponse())
+            ResponseEntity.ok().body(OkResponseDTO())
         } catch (e: TransactionNotFoundException) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse("The transaction not exists"))
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponseDTO("The transaction not exists"))
         } catch (e: InvalidOperationException) {
-            ResponseEntity.badRequest().body(ErrorResponse("Invalid operation"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Invalid operation"))
         } catch (e: Throwable) {
-            ResponseEntity.badRequest().body(ErrorResponse("Bad Request"))
+            ResponseEntity.badRequest().body(ErrorResponseDTO("Bad Request"))
         }
     }
 }
