@@ -37,7 +37,7 @@ class ActivityService {
     }
 
     fun allActivities(): List<ActivityDTO> {
-        return repository.findAll().filter { it.isPosted() }.map {
+        return repository.findAll().reversed().filter { it.isPosted() }.map {
             ActivityDTO(
                 it.id,
                 it.hour.toString(),

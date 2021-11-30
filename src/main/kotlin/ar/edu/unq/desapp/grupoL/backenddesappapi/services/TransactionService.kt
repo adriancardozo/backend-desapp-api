@@ -37,7 +37,7 @@ class TransactionService {
 
     fun userTransactions(token: String): List<TransactionDTO> {
         val user = getUser(token)
-        return user.transactions().map { toTransactionDTO(it, user) }
+        return user.transactions().reversed().map { toTransactionDTO(it, user) }
     }
 
     @Transactional
