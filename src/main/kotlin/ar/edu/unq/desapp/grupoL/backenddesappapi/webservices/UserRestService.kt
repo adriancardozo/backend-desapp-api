@@ -7,8 +7,6 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.UserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.InvalidDataException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserAlreadyExistsException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.UserNotFoundException
-import ar.edu.unq.desapp.grupoL.backenddesappapi.model.User
-import ar.edu.unq.desapp.grupoL.backenddesappapi.services.JwtUserService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.UserService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
@@ -26,8 +24,6 @@ import org.springframework.web.bind.annotation.*
 class UserRestService {
     @Autowired
     private lateinit var userService: UserService
-    @Autowired
-    private lateinit var jwtUserService: JwtUserService
 
     @PostMapping("/api/user/register")
     @CrossOrigin

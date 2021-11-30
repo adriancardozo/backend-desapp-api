@@ -11,6 +11,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.annotation.DirtiesContext
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
@@ -27,6 +28,7 @@ class UserServiceTests {
     }
 
     @Test
+    @Transactional
     fun whenAUserIsSavedItCanBeRecoveredById() {
         val idUserSaved = userService.save(user).id
         val recoveredUser = userService.findByID(idUserSaved)
@@ -34,6 +36,7 @@ class UserServiceTests {
     }
 
     @Test
+    @Transactional
     fun whenAUserIsSavedItCanBeRecoveredByEmail() {
         val emailUserSaved = userService.save(user).email
         val recoveredUser = userService.findByEmail(emailUserSaved)

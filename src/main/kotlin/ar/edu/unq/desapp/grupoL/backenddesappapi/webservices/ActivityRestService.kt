@@ -6,13 +6,17 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.LoginUserDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.services.ActivityService
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.ErrorResponse
 import ar.edu.unq.desapp.grupoL.backenddesappapi.webservices.responses.OkResponse
+import io.swagger.annotations.Api
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
-@Controller
+@RestController
+@EnableAutoConfiguration
+@Api(value = "activity", description = "Rest API for activity operations", tags = ["Activity API"])
 class ActivityRestService {
     @Autowired
     private lateinit var activityService: ActivityService

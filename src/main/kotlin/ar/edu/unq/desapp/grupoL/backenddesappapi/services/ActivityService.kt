@@ -4,10 +4,10 @@ import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityQuotationDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.ActivityDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.CreateActivityDTO
 import ar.edu.unq.desapp.grupoL.backenddesappapi.dtos.SimpleUserDTO
+import ar.edu.unq.desapp.grupoL.backenddesappapi.exceptions.ActivityNotFoundException
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Activity
 import ar.edu.unq.desapp.grupoL.backenddesappapi.model.Quotation
 import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.ActivityRepository
-import ar.edu.unq.desapp.grupoL.backenddesappapi.repositories.QuotationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,8 +21,6 @@ class ActivityService {
     lateinit var userService: UserService
     @Autowired
     lateinit var jwtUserService: JwtUserService
-    @Autowired
-    lateinit var quotationRepository: QuotationRepository
 
     @Transactional
     fun createActivity(token: String, createActivity: CreateActivityDTO) {
@@ -30,7 +28,7 @@ class ActivityService {
         repository.save(
             Activity(
                 LocalDateTime.now(),
-                quotationRepository.save(Quotation(createActivity.cryptoName, createActivity.cryptoQuotation)),
+                Quotation(createActivity.cryptoName, createActivity.cryptoQuotation),
                 user,
                 createActivity.amount,
                 createActivity.type
@@ -39,8 +37,9 @@ class ActivityService {
     }
 
     fun allActivities(): List<ActivityDTO> {
-        return repository.findAll().map {
+        return repository.findAll().filter { it.isPosted() }.map {
             ActivityDTO(
+                it.id,
                 it.hour.toString(),
                 ActivityQuotationDTO(it.quotation.name, it.quotation.arPrice),
                 it.amount,
@@ -48,5 +47,11 @@ class ActivityService {
                 SimpleUserDTO(it.user.name, it.user.lastname, it.user.numberOfOperations, it.user.reputation(), it.user.email),
                 it.type
             ) }
+    }
+
+    fun findById(id: Int): Activity {
+        val activity = repository.findById(id)
+        if(activity.isEmpty || !activity.get().isPosted()) throw ActivityNotFoundException()
+        return activity.get()
     }
 }
